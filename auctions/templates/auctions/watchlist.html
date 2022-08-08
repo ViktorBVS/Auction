@@ -1,0 +1,50 @@
+﻿{% extends "auctions/layout.html" %}
+
+{% block body %}
+    {% for watchlist in Watchlists %}
+        <div class="container2" style="float:left">
+            <div id="con1"> 
+                <img src="{{ watchlist.wl_Product_id.pr_Img.img_Logo.url}}" width="210px" height="260px">
+            </div>
+            <div id="con2">
+                <br>
+                Производитель: <b>{{ watchlist.wl_Product_id.pr_Brend }}</b>   
+                <br>
+                Модель: <b>{{ watchlist.wl_Product_id.pr_Name }}</b>
+                <br> 
+                Цена: <b>{{ watchlist.wl_Shop.sh_Price }}</b> грн.
+                <br>
+                Тип механизма: <b>{{ watchlist.wl_Product_id.pr_Type }}</b>  
+                <br>
+                Пол: <b>{{ watchlist.wl_Product_id.pr_Sex }}</b>  
+                <br>
+                Материал корпуса: <b>{{ watchlist.wl_Product_id.pr_Case }}</b>  
+                <br>
+                Материал ремешка: <b>{{ watchlist.wl_Product_id.pr_Strap }}</b>  
+                <br>
+                Водозащита: <b>{{ watchlist.wl_Product_id.pr_Resist }}</b>  
+                <br>
+                Страна производитель: <b>{{ watchlist.wl_Product_id.pr_Country }}</b>
+                <br>
+                В наличии: <b>{{  watchlist.wl_Shop.sh_Left }}</b> шт.
+                <br>
+                <br>
+                {% if watchlist.wl_Shop.sh_Status %}
+                        <h6 id="open">Есть в наличии</h6>
+                {% else %}
+                        <h6 id="close">Нет в наличии</h6>
+                {% endif %} 
+                <br>
+                <form action="{% url 'details' watchlist.wl_Product_id.id %}" method="get">
+                    <input class="butn butn1" type="submit" value="  Подробно >>  ">
+                </form>
+                <br>
+                <form id="delwatchlist" method="post" action="{% url 'watchlist' user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="userid" value="{{ user.id }}" form="delwatchlist"> 
+                    <button class="butn butn1" type="submit" form="delwatchlist" name="delwatchlist" value="{{ watchlist.id }}">    Убрать    </button>
+                </form> 
+            </div>       
+        </div>
+    {% endfor %}
+{% endblock %}

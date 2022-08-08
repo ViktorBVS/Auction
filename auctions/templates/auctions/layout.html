@@ -1,0 +1,88 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'auctions/styles.css' %}">
+    </head>
+    <body>
+        <div class="head"> Time Street </div>
+        <div class="navbar">
+            <a href="{% url 'index' %}"> Главная</a>
+            <a href="{% url 'all' %}"> Весь товар</a>
+            <div class="dropdown" >
+                <button class="dropbtn"> Бренды
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <div class="column">
+                        {% for brend in Brends %}
+                            <a href="{% url 'brend' brend.id %}"> {{ brend }}</a>
+                        {% endfor %} 
+                    </div>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"> Часы
+                    <i class="fa fa-caret-down"></i>
+                </button>
+                <div class="dropdown-content">
+                    <div class="column">
+                        <h5> Механизм </h5>
+                        {% for type in Types %}
+                            <a href="{% url 'type' type.id %}"> {{ type }}</a>
+                        {% endfor %} 
+                    </div>
+                    <div class="column">
+                        <h5> Пол </h5>
+                        {% for sex in Sex %}
+                            <a href="{% url 'sex' sex.id %}">{{ sex }}</a>
+                        {% endfor %} 
+                    </div>
+                    <div class="column">
+                        <h5> Водозащита </h5>
+                        {% for resist in Resists %}
+                            <a href="{% url 'resist' resist.id %}">{{ resist }}</a>
+                        {% endfor %} 
+                    </div>
+                </div>
+            </div> 
+            <div>
+                {% if not user.is_authenticated %}
+                {% else %}
+                <form id="watchlist" method="post" action="{% url 'watchlist' user.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="userid" value="{{ user.id }}" form="watchlist"> 
+                    <input type="hidden" name="currentid" value="{{ current_Product.id }}" form="watchlist">   
+                    <input class="bttn bttn1" type="submit" form="watchlist" name="watchlist" value="Избранное">
+                </form>
+                {% endif %}
+            </div>
+            <ul class="nav">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link">{{ user.username }}</a>
+                </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Войти</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Зарегистрироваться</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>  
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>

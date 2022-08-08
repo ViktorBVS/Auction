@@ -1,0 +1,7 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+  {% for stock in Stock %}
+    <img src="{{ stock.s_Img.url }}" alt="{{ stock.s_Title }}" width="100%" height="100%">
+  {% endfor %}
+{% endblock %}

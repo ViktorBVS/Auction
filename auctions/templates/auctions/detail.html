@@ -1,0 +1,146 @@
+﻿{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="row">
+    <div class="side2" display= inline-block>
+        <div class="mySlides">
+            <div class="numbertext">1 / 4</div>
+            <img src="{{ current_Product.pr_Img.img_Logo.url}}" width="500px" height="650px">
+        </div>
+        <div class="mySlides">
+            <div class="numbertext">2 / 4</div>
+            <img src="{{ current_Product.pr_Img.img_01.url}}" width="500px" height="650px">
+        </div>
+        <div class="mySlides">
+            <div class="numbertext">3 / 4</div>
+            <img src="{{ current_Product.pr_Img.img_02.url}}" width="500px" height="650px">
+        </div>
+        <div class="mySlides">
+            <div class="numbertext">4 / 4</div>
+            <img src="{{ current_Product.pr_Img.img_03.url}}" width="500px" height="650px">
+        </div>
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
+    </div>
+    <div class="main2" display= inline-block>
+        Производитель: <b>{{ current_Product.pr_Brend }}</b> 
+        <br> 
+        Модель: <b>{{ current_Product.pr_Name }}</b>  
+        <br>
+        Тип механизма: <b>{{ current_Product.pr_Type }}</b>  
+        <br>
+        Пол: <b>{{ current_Product.pr_Sex }}</b>  
+        <br>
+        Материал корпуса: <b>{{ current_Product.pr_Case }}</b>  
+        <br>
+        Материал ремешка: <b>{{ current_Product.pr_Strap }}</b>  
+        <br>
+        Водозащита: <b>{{ current_Product.pr_Resist }}</b>  
+        <br>
+        Страна производитель: <b>{{ current_Product.pr_Country }}</b>  
+        <br>
+        Описание: <b>{{ current_Shop.sh_Desc }}</b>  
+        <br>
+        Цена:<b>{{ current_Shop.sh_Price }}</b> грн.
+        <br>
+        В наличии: <b>{{ current_Shop.sh_Left }}</b> шт.
+        <br>
+        Продано: <b>{{ current_Shop.sh_Sales }}</b> шт.
+        <br>
+        Объявление создано: <b>{{ current_Shop.sh_Date }}</b> 
+        <br>
+        <br>
+        {% if current_Shop.sh_Status %}
+            <h5 id="open">Есть в наличии</h5>
+        {% else %}
+            <h5 id="close">Нет в наличии</h5>
+        {% endif %} 
+        <br>
+        <p>
+            {% if not user.is_authenticated %}
+                Авторизируйтесь для добавления товара в избранное!
+            {% elif current_Shop.sh_Status == True %}
+                <form id="addwatchlist" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="userid" value="{{ user.id }}" form="addwatchlist"> 
+                    <button class="button button1" type="submit" form="addwatchlist" name="addwatchlist">В избранное</button>
+                </form>
+            {% else %}
+            {% endif %}
+        </p>
+        <div class="conteiner2">
+            <p>
+                {% if not user.is_authenticated %}
+                    Авторизируйтесь для покупки товара!
+                {% elif current_Shop.sh_Status == True %}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="by" value="True">
+                        <input class="button button1" type="submit" name="by_Product" value="Купить"/>
+                        <input class="iofield" name="sum" value="{{form.sum.value}}">
+                    </form>
+                {% else %}
+                {% endif %}
+            </p>
+        </div>
+        <br>
+        <div class="containercomment">
+            <h2>Коментарии:</h2>
+            <div id="commentlist">
+                {% for Comment in comments %}
+                    <span id="author">{{ Comment.c_User }}</span> 
+                    <span class="date">({{ Comment.c_Date }})</span>
+                        {{ Comment.c_Text|linebreaks }}
+                {% endfor %}
+            </div>
+            <div class="addcomment">
+                {% if not user.is_authenticated %}
+                    Авторизируйтесь для того чтобы оставить коментарий
+                {% elif current_Shop.sh_Status == True %}
+                    <form id="createcomment" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>
+                            <textarea class="commenttext" id="commenttext" placeholder="add comment" name="commenttext" form="createcomment"></textarea>
+                            <input type="hidden" name="userid" value="{{ user.id }}" form="createcomment">  
+                        </p>
+                        <p>
+                            <button class="button button1" type="submit" form="createcomment" name="createcomment">Add comment</button>
+                        </p>
+                    </form>
+                {% else %} 
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+        var slideIndex = 1;
+        showSlides(slideIndex);
+        
+        function plusSlides(n) {
+          showSlides(slideIndex += n);
+        }
+        
+        function currentSlide(n) {
+          showSlides(slideIndex = n);
+        }
+        function showSlides(n) {
+          var i;
+          var slides = document.getElementsByClassName("mySlides");
+          var dots = document.getElementsByClassName("demo");
+         
+          if (n > slides.length) {slideIndex = 1}
+          if (n < 1) {slideIndex = slides.length}
+          for (i = 0; i < slides.length; i++) {
+              slides[i].style.display = "none";
+          }
+          for (i = 0; i < dots.length; i++) {
+              dots[i].className = dots[i].className.replace(" active", "");
+          }
+          slides[slideIndex-1].style.display = "block";
+          dots[slideIndex-1].className += " active";
+          captionText.innerHTML = dots[slideIndex-1].alt;
+        }
+    </script>    
+</div>
+{% endblock %}

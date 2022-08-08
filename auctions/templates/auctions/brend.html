@@ -1,0 +1,65 @@
+﻿{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="row">
+    <div class="side">
+        <form action="" method="post">
+            {% csrf_token %}
+            <h3>Бренд</h3>
+            {% for brend in Brends %}
+                <input type="checkbox" name="brends" value="{{ brend.id }}"> {{ brend }}
+                <br>
+            {% endfor %}
+            <br>
+            <h3>Тип механизма</h3>
+            {% for type in Types %}
+                <input type="checkbox" name="types" value="{{ type.id }}"> {{ type }}
+                <br>
+            {% endfor %}
+            <br>
+            <h3>Пол</h3>
+            {% for sex in Sex %}
+                <input type="checkbox" name="sex" value="{{ sex.id }}"> {{ sex }}
+                <br>
+            {% endfor %}
+            <br>
+            <h3>Водозащита</h3>
+            {% for resist in Resists %}
+                <input type="checkbox" name="resists" value="{{ resist.id }}"> {{ resist }}
+                <br>
+            {% endfor %}
+            <br>
+                <input class="button button1" type="submit" value="Применить"/>
+        </form>
+    </div>
+    <!-- Основная часть-->
+    <div class="main">
+        {% for Product in Products %}
+        <div class="container" style="float:left">
+            <img src="{{ Product.pr_Img.img_Logo.url }}" alt="{{ Product.pr_Img.img_Name }}" width="200px" height="250px">
+            <br>
+            Производитель: {{ Product.pr_Brend }}
+            <br>
+            Модель: {{ Product.pr_Name }} 
+            <br>
+            {% for Shop in Shops %}
+                {% if Product.pr_Name == Shop.sh_Product.pr_Name %}    
+                    Цена: {{ Shop.sh_Price }} грн.
+                    <br>
+                    <br>
+                    {% if Shop.sh_Status %}
+                        <h6 id="open">Есть в наличии</h6>
+                    {% else %}
+                        <h6 id="close">Нет в наличии</h6>
+                    {% endif %} 
+                {% endif %}
+            {% endfor %} 
+            <br>
+            <form action="{% url 'details' Product.id %}" method="get">
+                <input class="button button1" type="submit" value="Подробно >>">
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
